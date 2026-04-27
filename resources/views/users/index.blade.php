@@ -1,184 +1,67 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestión de Usuarios | Sistema Médico</title>
+@extends('layouts.app')
 
-    <!-- ✅ CORRECCIÓN CLAVE -->
-    <link rel="stylesheet" href="{{ asset('css/styleCRUDUsuarios.css') }}">
-</head>
-<body>
+@section('title', 'Administración de Usuarios | MediSys')
 
-<header>
-    <span>Panel de Administración - Usuarios</span>
-    <a href="{{ url('/home') }}" class="home-btn">⬅ Volver al Home</a>
-</header>
+@section('content')
+<style>
+    .module-container { background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); padding: 30px; border-top: 4px solid #0f172a; }
+    .module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
+    .module-title { color: #0f172a; font-size: 20px; font-weight: 600; }
+    .btn-primary { background-color: #0284c7; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 14px; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background-color: #f8fafc; color: #475569; font-size: 12px; font-weight: 600; text-transform: uppercase; padding: 15px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+    .data-table td { padding: 16px 15px; color: #334155; font-size: 14px; border-bottom: 1px solid #f1f5f9; }
+    .role-badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+    .role-admin { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .role-recepcionista { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .alert { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
+    .alert-success { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .alert-error { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .btn-action { text-decoration: none; font-weight: 600; font-size: 13px; margin-right: 10px; }
+    .btn-edit { color: #0284c7; }
+    .btn-delete { color: #dc2626; background: none; border: none; cursor: pointer; font-weight: 600; font-size: 13px; padding: 0; }
+</style>
 
-<div class="container">
-
-    {{-- ALERTAS --}}
-    @if(session('success'))
-        <div class="alert success-alert">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert error-alert">
-            {{ session('error') }}
-        </div>
-    @endif
-
-
-    <div class="top-bar">
-        <h2>Listado de Usuarios</h2>
-        <button class="btn btn-primary" onclick="openModal('create')">
-            + Nuevo Usuario
-        </button>
+<div class="module-container">
+    <div class="module-header">
+        <h2 class="module-title">Directorio de Accesos</h2>
+        <a href="{{ route('users.create') }}" class="btn-primary">Crear Nuevo Usuario</a>
     </div>
 
+    @if(session('success')) <div class="alert alert-success">{{ session('success') }}</div> @endif
+    @if(session('error')) <div class="alert alert-error">{{ session('error') }}</div> @endif
 
-    <div class="table-responsive">
-        <table>
-            <thead>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo Electrónico</th>
+                <th>Perfil / Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($users as $user)
                 <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Cédula</th>
-                    <th>Correo</th>
-                    <th>Rol</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @foreach($usuarios as $u)
-                <tr>
-                    <td><strong>{{ $u->id_usuario }}</strong></td>
-
-                    <td>{{ $u->primer_nombre }} {{ $u->primer_apellido }}</td>
-
-                    <td>{{ $u->numero_de_cedula }}</td>
-                    <td>{{ $u->correo_electronico }}</td>
-
+                    <td><strong>{{ $user->name }}</strong></td>
+                    <td>{{ $user->email }}</td>
                     <td>
-                        <span class="badge">
-                            {{ ucfirst($u->rol) }}
+                        <span class="role-badge role-{{ $user->role }}">
+                            {{ $user->role }}
                         </span>
                     </td>
-
-                    <td>
-                        <button class="btn btn-warning"
-                            onclick='openModal("edit", @json($u))'>
-                            Editar
-                        </button>
-
-                        <form action="{{ route('users.destroy', $u->id_usuario) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-
-                            <button class="btn btn-danger"
-                                onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">
-                                Eliminar
-                            </button>
+                    <td style="display: flex; align-items: center;">
+                        <a href="{{ route('users.edit', $user->id) }}" class="btn-action btn-edit">Editar</a>
+                        @if(auth()->id() != $user->id)
+                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('¿Está seguro de eliminar este usuario del sistema?');">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn-action btn-delete">Eliminar</button>
                         </form>
+                        @endif
                     </td>
                 </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-
+            @endforeach
+        </tbody>
+    </table>
 </div>
-
-
-<!-- MODAL (IGUAL QUE EL TUYO) -->
-<div class="modal" id="userModal">
-    <div class="modal-content">
-
-        <h3 id="modalTitle">Nuevo Usuario</h3>
-        <hr>
-
-        <!-- ✅ CORRECCIÓN: ruta Laravel -->
-        <form id="userForm" action="{{ route('users.store') }}" method="POST">
-            @csrf
-
-            <input type="hidden" name="id_usuario" id="form_id_usuario">
-            <input type="hidden" name="accion" id="form_accion" value="crear_usuario">
-
-            <div class="row">
-                <div class="form-group">
-                    <label>Primer Nombre</label>
-                    <input type="text" name="primer_nombre" id="primer_nombre" required>
-                </div>
-                <div class="form-group">
-                    <label>Segundo Nombre</label>
-                    <input type="text" name="segundo_nombre" id="segundo_nombre">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group">
-                    <label>Primer Apellido</label>
-                    <input type="text" name="primer_apellido" id="primer_apellido" required>
-                </div>
-                <div class="form-group">
-                    <label>Segundo Apellido</label>
-                    <input type="text" name="segundo_apellido" id="segundo_apellido">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group">
-                    <label>Cédula</label>
-                    <input type="text" name="numero_de_cedula" id="numero_de_cedula" required>
-                </div>
-                <div class="form-group">
-                    <label>Celular</label>
-                    <input type="text" name="numero_de_celular" id="numero_de_celular" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Correo Electrónico</label>
-                <input type="email" name="correo_electronico" id="correo_electronico" required>
-            </div>
-
-            <div class="form-group">
-                <label>Rol del Sistema</label>
-                <select name="rol" id="rol" required>
-                    <option value="">Seleccione...</option>
-                    <option value="administrador">Administrador</option>
-                    <option value="recepcionista">Recepcionista</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" name="contrasena" id="contrasena">
-                <small id="pass_hint" style="display:none; color:#666;">
-                    (Dejar en blanco para no cambiar)
-                </small>
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">
-                    Cancelar
-                </button>
-
-                <button type="submit" class="btn btn-primary">
-                    Guardar Usuario
-                </button>
-            </div>
-
-        </form>
-
-    </div>
-</div>
-
-
-<!-- ✅ CORRECCIÓN JS -->
-<script src="{{ asset('js/usuarios.js') }}"></script>
-
-</body>
-</html>
+@endsection

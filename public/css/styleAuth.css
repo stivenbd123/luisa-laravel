@@ -1,452 +1,211 @@
-/* ============================================================
-   ESTILOS DEL <body> — contenedor raíz de toda la página
-   ============================================================ */
+/* Importar fuente limpia y moderna */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* --- ANIMACIÓN DEL FONDO (Tonos Médicos y Serios) --- */
+@keyframes gradientBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
 body {
-    /* "margin: 0" = elimina el margen exterior que los navegadores
-       agregan por defecto alrededor de la página.
-       Sin esto, aparecería un espacio blanco en los 4 bordes. */
-    margin: 0;
-
-    /* "padding: 0" = elimina el relleno interior por defecto del body.
-       Garantiza que el contenido empiece exactamente desde el borde. */
-    padding: 0;
-
-    /* "font-family" = define la fuente de texto para toda la página.
-       Se listan varias fuentes en orden de preferencia (pila de fuentes):
-       'Segoe UI' = fuente de Windows (moderna, legible).
-       Tahoma     = alternativa si Segoe UI no está disponible.
-       Geneva     = alternativa en sistemas Unix/Mac.
-       Verdana    = fuente muy legible en pantallas pequeñas.
-       sans-serif = tipo genérico de último recurso (cualquier fuente sin serifa). */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-    /* "background: #2c7be5" = color de fondo azul para toda la página.
-       #2c7be5 = color hexadecimal: 2c (rojo), 7b (verde), e5 (azul).
-       Este azul crea contraste con el formulario blanco al centro. */
-    background: #2c7be5;
-
-    /* "display: flex" = activa el modelo de diseño Flexbox en el body.
-       Flexbox permite alinear los elementos hijos (el formulario)
-       de forma fácil tanto horizontal como verticalmente. */
+    /* Degradado en azules profundos, aceros y teal oscuro (Transmite confianza médica) */
+    background: linear-gradient(-45deg, #0b3b60, #145a86, #0f766e, #1e3a8a);
+    background-size: 400% 400%;
+    animation: gradientBg 15s ease infinite;
+    
     display: flex;
-
-    /* "justify-content: center" = centra los elementos hijos
-       en el eje HORIZONTAL (de izquierda a derecha).
-       El formulario quedará centrado horizontalmente en la pantalla. */
     justify-content: center;
-
-    /* "align-items: center" = centra los elementos hijos
-       en el eje VERTICAL (de arriba a abajo).
-       Combinado con justify-content: center, el formulario
-       queda exactamente en el centro de la pantalla. */
     align-items: center;
-
-    /* "min-height: 100vh" = altura mínima del 100% del viewport (pantalla visible).
-       "vh" = viewport height: 1vh = 1% de la altura de la pantalla.
-       "100vh" = toda la altura de la ventana del navegador.
-       "min-height" en lugar de "height" permite que la página crezca
-       si el contenido es más alto que la pantalla (sin cortar el formulario). */
     min-height: 100vh;
+    padding: 20px;
+    overflow: hidden;
 }
 
-
-/* ============================================================
-   CONTENEDOR DEL FORMULARIO DE REGISTRO
-   Aplica a: <div class="register-container">
-   ============================================================ */
-
-.register-container {
-    /* "background: #ffffff" = fondo blanco para el contenedor del formulario.
-       Contrasta con el fondo azul del body, haciendo que el formulario
-       "flote" visualmente sobre el fondo. */
-    background: #ffffff;
-
-    /* "padding: 40px" = relleno interior de 40px en los 4 lados.
-       Crea espacio entre el borde del contenedor y el contenido interno
-       (campos del formulario, botones, títulos). */
-    padding: 40px;
-
-    /* "border-radius: 12px" = redondea las 4 esquinas del contenedor.
-       12px = radio de curvatura; a mayor valor, más redondeado.
-       Crea una apariencia moderna tipo "tarjeta". */
-    border-radius: 12px;
-
-    /* "box-shadow" = agrega una sombra exterior al contenedor.
-       Valores en orden:
-       0      = desplazamiento horizontal (sin desplazamiento lateral).
-       15px   = desplazamiento vertical (sombra 15px hacia abajo).
-       35px   = difuminado (qué tan borrosa/suave es la sombra).
-       rgba(0,0,0,0.2) = color negro con 20% de opacidad (sombra sutil). */
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+/* --- ANIMACIÓN DE ENTRADA --- */
+@keyframes wipeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
+/* Tarjeta Cristalina (Glassmorphism Blanco - Muy legible) */
+.login-container, .register-container {
+    /* Blanco casi sólido pero con un leve porcentaje de transparencia para el blur */
+    background: rgba(255, 255, 255, 0.92); 
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    
+    padding: 45px 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    
+    /* Sombra elegante que separa el panel del fondo oscuro */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+    
+    width: 100%;
+    max-width: 440px;
+    
+    animation: wipeInDown 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
 
-/* ============================================================
-   TÍTULO h1 DENTRO DEL CONTENEDOR DE REGISTRO
-   Aplica a: <h1> que sea hijo de .register-container
-   ============================================================ */
-
-.register-container h1 {
-    /* "text-align: center" = centra el texto del título horizontalmente. */
+/* Título Premium */
+.login-container h1, .register-container h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
     text-align: center;
-
-    /* "margin-bottom: 25px" = agrega 25px de espacio DEBAJO del título,
-       separándolo visualmente de los campos del formulario. */
-    margin-bottom: 25px;
-
-    /* "font-size: 22px" = tamaño de la fuente del título en píxeles. */
-    font-size: 22px;
-
-    /* "color: #2c3e50" = color del texto del título.
-       #2c3e50 = gris azulado oscuro, más suave que el negro puro (#000000). */
-    color: #2c3e50;
+    color: #0f172a; /* Azul pizarra muy oscuro */
+    letter-spacing: -0.5px;
 }
 
+/* Alertas legibles */
+.alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+}
 
-/* ============================================================
-   GRUPO DE CAMPO DE FORMULARIO
-   Aplica a: <div class="form-group"> que envuelve label + input.
-   ============================================================ */
+.alert-success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+}
 
+/* Form Group */
 .form-group {
-    /* "margin: 15px 0" = margen de 15px arriba y abajo, 0 a los lados.
-       Separa verticalmente cada par label+input del siguiente. */
-    margin: 15px 0;
-
-    /* "text-align: center" = centra el contenido del grupo (label e input)
-       horizontalmente dentro del contenedor padre. */
-    text-align: center;
+    margin-bottom: 20px;
+    text-align: left;
 }
-
-
-/* ============================================================
-   ETIQUETA DEL CAMPO
-   Aplica a: <label> dentro de .form-group
-   ============================================================ */
 
 .form-group label {
-    /* "display: block" = hace que el label ocupe toda la línea disponible.
-       Por defecto los label son inline (en línea con el texto anterior).
-       Con block, el label aparece en su propia línea encima del input. */
     display: block;
-
-    /* "font-size: 13px" = texto del label ligeramente más pequeño que el body. */
-    font-size: 13px;
-
-    /* "font-weight: 600" = grosor semi-negrita para el texto del label.
-       600 = semibold (entre normal=400 y negrita=700). */
     font-weight: 600;
-
-    /* "margin-bottom: 5px" = pequeño espacio entre el label y el input debajo. */
-    margin-bottom: 5px;
-
-    /* "color: #34495e" = gris azulado oscuro para el texto del label. */
-    color: #34495e;
+    margin-bottom: 6px;
+    color: #475569; /* Gris oscuro profesional */
+    font-size: 13px;
+    letter-spacing: 0.3px;
 }
 
-
-/* ============================================================
-   CAMPO DE ENTRADA DE TEXTO
-   Aplica a: <input> dentro de .form-group
-   ============================================================ */
-
+/* Inputs Legibles y Modernos */
 .form-group input {
-    /* "width: 95%" = el input ocupa el 95% del ancho del .form-group padre.
-       Se usa 95% en lugar de 100% para dejar un pequeño margen visual
-       y evitar que el borde del input toque el borde del contenedor. */
-    width: 95%;
-
-    /* "padding: 8px" = relleno interior de 8px en todos los lados.
-       Aumenta el área clickeable del campo y hace que el texto no
-       quede pegado al borde del input. */
-    padding: 8px;
-
-    /* "border-radius: 6px" = esquinas ligeramente redondeadas para el input. */
-    border-radius: 6px;
-
-    /* "border: 1px solid #ccc" = borde de 1px de color gris claro (#ccc).
-       "solid" = línea sólida (otros valores: dashed=guiones, dotted=puntos). */
-    border: 1px solid #ccc;
-}
-
-
-/* ============================================================
-   CAMPO DE ENTRADA EN FOCO (cuando el usuario hace clic en él)
-   ":focus" = pseudoclase que aplica cuando el elemento está activo/seleccionado.
-   ============================================================ */
-
-.form-group input:focus {
-    /* "border-color: #2c7be5" = cambia el color del borde a azul
-       cuando el usuario hace clic en el campo, dando retroalimentación visual. */
-    border-color: #2c7be5;
-
-    /* Se repite "width: 95%" para evitar que el input cambie de tamaño al enfocarse.
-       Algunos navegadores alteran el width en :focus — esto lo previene. */
-    width: 95%;
-
-    /* "outline: none" = elimina el borde exterior predeterminado del navegador
-       (ese contorno azul o naranja que aparece al hacer clic en Chrome/Firefox).
-       Se reemplaza por nuestro propio efecto visual con box-shadow. */
-    outline: none;
-
-    /* "box-shadow: 0 0 0 2px rgba(44,123,229,0.2)" = sombra interior suave.
-       0   = sin desplazamiento horizontal.
-       0   = sin desplazamiento vertical.
-       0   = sin difuminado (sombra nítida).
-       2px = expansion: crece 2px desde el borde del input hacia afuera.
-       rgba(44,123,229,0.2) = azul con 20% de opacidad = "halo" azul suave. */
-    box-shadow: 0 0 0 2px rgba(44, 123, 229, 0.2);
-}
-
-
-/* ============================================================
-   BOTÓN DE REGISTRO
-   Aplica a: <button class="register-btn">
-   ============================================================ */
-
-.register-btn {
-    /* "width: 100%" = el botón ocupa todo el ancho del contenedor padre. */
+    display: block;
     width: 100%;
-
-    /* "padding: 12px" = relleno interior de 12px — botón más alto y cómodo de clicar. */
-    padding: 12px;
-
-    /* "margin-top: 10px" = espacio de 10px encima del botón,
-       separándolo del último campo del formulario. */
-    margin-top: 10px;
-
-    /* "background: #2c7be5" = fondo azul del botón,
-       mismo azul que el fondo de la página para coherencia visual. */
-    background: #2c7be5;
-
-    /* "border: none" = elimina el borde que los navegadores agregan
-       por defecto a los elementos <button>. */
-    border: none;
-
-    /* "border-radius: 8px" = esquinas redondeadas del botón. */
-    border-radius: 8px;
-
-    /* "color: #ffffff" = texto blanco para contrastar con el fondo azul. */
-    color: #ffffff;
-
-    /* "font-size: 15px" = tamaño del texto del botón. */
+    padding: 13px 16px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
     font-size: 15px;
+    color: #1e293b;
+    transition: all 0.3s ease;
+}
 
-    /* "font-weight: 600" = texto semi-negrita para mayor legibilidad. */
+.form-group input::placeholder {
+    color: #94a3b8;
+}
+
+.form-group input:hover {
+    border-color: #94a3b8;
+    background: #ffffff;
+}
+
+/* Micro-interacción limpia al hacer focus */
+.form-group input:focus {
+    background: #ffffff;
+    border-color: #0ea5e9; /* Azul médico claro */
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+    transform: translateY(-1px);
+}
+
+/* --- ANIMACIÓN DE BRILLO PARA EL BOTÓN --- */
+@keyframes shimmery {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Botón Médico Principal */
+.login-btn, .register-btn {
+    position: relative;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); /* Azul clínico confiable */
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
     font-weight: 600;
-
-    /* "cursor: pointer" = cambia el cursor a una mano cuando pasa sobre el botón.
-       Por defecto los botones muestran la flecha — pointer indica interactividad. */
     cursor: pointer;
-
-    /* "transition: 0.3s ease" = animación suave de 0.3s para cambios de estilo.
-       "ease" = la animación empieza lento, acelera y termina lento (curva natural).
-       Hace que el cambio de color al hover no sea abrupto sino gradual. */
-    transition: 0.3s ease;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    overflow: hidden;
 }
 
-/* Azul más oscuro al pasar el cursor — retroalimentación visual de interactividad. */
-.register-btn:hover {
-    background: #1a68d1;
+/* Destello sutil en el botón */
+.login-btn::after, .register-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    animation: shimmery 3s infinite;
 }
 
+.login-btn:hover, .register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4);
+}
 
-/* ============================================================
-   TEXTO DEL PIE DEL FORMULARIO
-   Aplica a: <p class="footer-text">
-   Típicamente contiene "¿Ya tienes cuenta? Inicia sesión".
-   ============================================================ */
-
+/* Textos inferiores */
 .footer-text {
-    margin-top: 15px;
+    margin-top: 25px;
+    font-size: 14px;
+    color: #64748b;
     text-align: center;
-    font-size: 13px;
-    /* "color: #7f8c8d" = gris neutro para texto secundario/de apoyo. */
-    color: #7f8c8d;
 }
 
-/* Enlace dentro del texto de pie. */
 .footer-text a {
-    color: #2c7be5;
-    /* "text-decoration: none" = elimina el subrayado predeterminado del enlace. */
+    color: #0284c7;
     text-decoration: none;
     font-weight: 600;
+    transition: color 0.2s ease;
 }
 
-/* Subrayado al hover: confirma visualmente que es un enlace clickeable. */
 .footer-text a:hover {
+    color: #0369a1;
     text-decoration: underline;
 }
 
-
-/* ============================================================
-   FILA DE CAMPOS EN DOS COLUMNAS
-   Aplica a: <div class="row"> que contiene dos .form-group.
-   Usado para mostrar campos lado a lado
-   (ej: primer_nombre | segundo_nombre).
-   ============================================================ */
-
-.row {
-    /* "display: flex" = activa Flexbox — los .form-group hijos se colocan
-       en línea horizontal en lugar de apilarse verticalmente. */
-    display: flex;
-
-    /* "gap: 10px" = espacio de 10px ENTRE los elementos hijos (no en los extremos).
-       Es la forma moderna de separar elementos flex sin usar margin lateral. */
-    gap: 10px;
-}
-
-.row .form-group {
-    /* "flex: 1" = cada hijo del .row recibe la misma proporción del ancho total.
-       Con 2 hijos: cada uno ocupa el 50%. Con 3 hijos: cada uno el 33%.
-       Es la abreviación de: flex-grow:1, flex-shrink:1, flex-basis:0. */
-    flex: 1;
-}
-
-
-/* ============================================================
-   CONTENEDOR DEL FORMULARIO DE LOGIN
-   Similar a .register-container pero con ancho fijo (400px)
-   porque el login tiene menos campos (solo correo y contraseña).
-   ============================================================ */
-
-.login-container {
-    background: #ffffff;
-    padding: 40px;
-
-    /* "width: 400px" = ancho fijo para el contenedor de login.
-       .register-container no tiene width fijo — crece con su contenido.
-       El login es más estrecho porque tiene menos campos. */
-    width: 400px;
-
-    border-radius: 12px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    text-align: center;
-}
-
-.login-container h1 {
-    /* "margin-bottom: 30px" = más espacio que en register (25px)
-       porque el login tiene solo dos campos — se necesita más "aire". */
-    margin-bottom: 30px;
-    font-size: 22px;
-    color: #2c3e50;
-}
-
-
-/* ============================================================
-   BOTÓN DE LOGIN
-   Mismo estilo visual que .register-btn.
-   Se define como clase separada para poder personalizar
-   independientemente si se necesita en el futuro.
-   ============================================================ */
-
-.login-btn {
-    width: 100%;
-    padding: 12px;
-    background: #2c7be5;
-    border: none;
-    border-radius: 8px;
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s ease;
-}
-
-.login-btn:hover {
-    background: #1a68d1;
-}
-
-
-/* ============================================================
-   ALERTA DE ERROR
-   Aplica a: <div class="alert-error">
-   Mostrada cuando las credenciales son incorrectas o hay un error.
-   El controlador guarda el mensaje en $_SESSION['error_login'] y
-   la vista genera este div para mostrarlo.
-   ============================================================ */
-
-.alert-error {
-    /* "background-color: #ffe6e6" = fondo rosa muy claro para indicar error. */
-    background-color: #ffe6e6;
-
-    /* "color: #cc0000" = texto rojo oscuro, legible sobre el fondo rosado. */
-    color: #cc0000;
-
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    font-size: 14px;
-    text-align: center;
-
-    /* "border: 1px solid #ffb3b3" = borde rosa más intenso que el fondo
-       para delimitar visualmente el área de la alerta. */
-    border: 1px solid #ffb3b3;
-
-    /* "animation: fadeIn 0.3s ease-in-out" = aplica la animación "fadeIn".
-       La alerta aparece con efecto de fundido suave en 0.3 segundos.
-       "ease-in-out" = empieza lento, acelera en el medio, termina lento. */
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-
-/* ============================================================
-   ALERTA DE ÉXITO
-   Aplica a: <div class="alert-success">
-   Mostrada tras registro o login exitoso.
-   Misma estructura que .alert-error pero en tonos verdes.
-   ============================================================ */
-
-.alert-success {
-    /* "background-color: #e6ffed" = fondo verde muy claro para indicar éxito. */
-    background-color: #e6ffed;
-
-    /* "color: #1e7e34" = texto verde oscuro, legible sobre el fondo verdoso. */
-    color: #1e7e34;
-
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    font-size: 14px;
-    text-align: center;
-
-    /* "border: 1px solid #b7ebc6" = borde verde más intenso que el fondo. */
-    border: 1px solid #b7ebc6;
-
-    /* Misma animación fadeIn que .alert-error para consistencia visual. */
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-
-/* ============================================================
-   ANIMACIÓN FADEÍN
-   Usada por .alert-error y .alert-success para aparecer suavemente.
-   "@keyframes" = define una animación CSS nombrada con sus fotogramas.
-   "fadeIn" = nombre de la animación (debe coincidir con el usado en animation:).
-   ============================================================ */
-
-@keyframes fadeIn {
-
-    /* "from" = estado INICIAL de la animación (fotograma 0%). */
-    from {
-        /* "opacity: 0" = completamente transparente al inicio. */
-        opacity: 0;
-
-        /* "transform: translateY(-8px)" = desplazado 8px HACIA ARRIBA al inicio.
-           Negativo = hacia arriba. La alerta empieza un poco por encima
-           de su posición final y "cae" suavemente a su lugar. */
-        transform: translateY(-8px);
-    }
-
-    /* "to" = estado FINAL de la animación (fotograma 100%). */
-    to {
-        /* "opacity: 1" = completamente visible al final. */
-        opacity: 1;
-
-        /* "transform: translateY(0)" = en su posición vertical normal.
-           La combinación opacity 0→1 + translateY -8px→0 crea el efecto
-           de "deslizarse hacia abajo mientras aparece". */
-        transform: translateY(0);
-    }
+/* Mensajes de validación de error */
+.text-danger {
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+    font-weight: 500;
 }

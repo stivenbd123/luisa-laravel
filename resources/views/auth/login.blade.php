@@ -2,36 +2,42 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login | Sistema de Citas</title>
+    <title>Iniciar Sesión | Sistema de Citas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- ✅ CORRECTO en Laravel -->
     <link rel="stylesheet" href="{{ asset('css/styleAuth.css') }}">
 </head>
 <body>
 
 <div class="login-container">
-    <h1>Sistema de Gestión de Citas Médicas</h1>
+    <h1>Acceso al Sistema</h1>
 
-    {{-- ERROR LOGIN --}}
-    @if(session('error_login'))
+    {{-- Mostrar errores si las credenciales son incorrectas --}}
+    @if($errors->any())
         <div class="alert-error">
-            {{ session('error_login') }}
+            {{ $errors->first() }}
         </div>
     @endif
 
-    {{-- FORMULARIO --}}
+    {{-- Mostrar mensaje verde si viene redirigido desde el registro --}}
+    @if(session('success'))
+        <div class="alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('login.post') }}">
         @csrf
 
         <div class="form-group">
             <label>Correo Electrónico</label>
-            <input type="email" name="correo_electronico" required>
+            {{-- Corregido: name="email" --}}
+            <input type="email" name="email" value="{{ old('email') }}" required>
         </div>
 
         <div class="form-group">
             <label>Contraseña</label>
-            <input type="password" name="contrasena" required>
+            {{-- Corregido: name="password" --}}
+            <input type="password" name="password" required>
         </div>
 
         <button type="submit" class="login-btn">

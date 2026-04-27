@@ -1,0 +1,72 @@
+@extends('layouts.app')
+
+@section('title', 'Agenda de Citas | MediSys')
+
+@section('content')
+<style>
+    .module-container { background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); padding: 30px; border-top: 4px solid #0f172a; }
+    .module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
+    .module-title { color: #0f172a; font-size: 20px; font-weight: 600; }
+    .btn-primary { background-color: #0284c7; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 14px; transition: background-color 0.2s; }
+    .btn-primary:hover { background-color: #0369a1; }
+    .alert-success { background-color: #f0fdf4; color: #166534; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; margin-bottom: 20px; font-size: 14px; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background-color: #f8fafc; color: #475569; font-size: 12px; font-weight: 600; text-transform: uppercase; padding: 15px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+    .data-table td { padding: 16px 15px; color: #334155; font-size: 14px; border-bottom: 1px solid #f1f5f9; }
+    .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+    /* Ajuste a tus estados reales de la base de datos */
+    .status-agendada { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .status-confirmada { background-color: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+    .status-atendida { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .status-cancelada { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .empty-state { text-align: center; padding: 40px; color: #64748b; font-style: italic; }
+</style>
+
+<div class="module-container">
+    <div class="module-header">
+        <h2 class="module-title">Agenda General de Citas</h2>
+        <a href="{{ route('appointments.create') }}" class="btn-primary">Agendar Nueva Cita</a>
+    </div>
+
+    @if(session('success'))
+        <div class="alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Fecha y Hora</th>
+                <th>Paciente</th>
+                <th>Médico Asignado</th>
+                <th>Consultorio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($appointments as $appointment)
+                <tr>
+                    <td><strong>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y H:i') }}</strong></td>
+                    <td>{{ $appointment->patient->name }}</td>
+                    <td>Dr./Dra. {{ $appointment->doctor->name }}</td>
+                    <td>{{ $appointment->consultingRoom->name }}</td>
+                    <td>
+                        <span class="status-badge status-{{ strtolower($appointment->status) }}">
+                            {{ $appointment->status }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ route('appointments.edit', $appointment->id) }}" style="color: #0284c7; text-decoration: none; font-weight: 600;">Gestionar</a>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="empty-state">No hay citas programadas en el sistema.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+@endsection

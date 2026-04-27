@@ -1,53 +1,70 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // Mostrar vista de Login
     public function showLogin()
     {
         return view('auth.login');
     }
 
+    // Procesar Login
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended('home');
+        }
+
+        return back()->withErrors([
+            'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+        ])->onlyInput('email');
+    }
+
+    // Mostrar vista de Registro
     public function showRegister()
     {
         return view('auth.register');
     }
 
-    public function login(Request $request)
-    {
-        $usuario = DB::table('usuarios')
-            ->where('correo_electronico', $request->correo_electronico)
-            ->first();
-
-        if ($usuario && Hash::check($request->contrasena, $usuario->contraseña)) {
-
-            session([
-                'id_usuario' => $usuario->id_usuario,
-                'nombre' => $usuario->primer_nombre,
-                'rol' => $usuario->rol
-            ]);
-
-            return redirect('/home');
-        }
-
-        return back()->with('error_login', 'Correo o contraseña incorrectos');
-    }
-
+    // Procesar Registro
     public function register(Request $request)
     {
-        DB::table('usuarios')->insert([
-            'primer_nombre' => $request->primer_nombre,
-            'primer_apellido' => $request->primer_apellido,
-            'correo_electronico' => $request->correo_electronico,
-            'contraseña' => Hash::make($request->contrasena),
-            'numero_de_celular' => $request->numero_de_celular,
-            'rol' => 'recepcionista'
+        $request->validate([
+            'name' => 'required|string|max:255',
+            // unique:users verifica automáticamente si el correo existe en la base de datos
+            'email' => 'required|string|email|max:255|unique:users', 
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        return back()->with('success', 'Usuario registrado correctamente');
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'recepcionista' // Rol por defecto
+        ]);
+
+        return redirect()->route('login')->with('success', 'Registro exitoso. Por favor, inicia sesión.');
+    }
+
+    // Cerrar Sesión
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
     }
 }
