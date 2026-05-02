@@ -37,7 +37,7 @@
             <li><a href="{{ route('reports.index') }}">Historial Clínico</a></li>
             <li><a href="{{ route('exports.view') }}">Exportar Reportes</a></li>
             
-            {{-- Botón exclusivo para el administrador --}}
+            {{-- Botón para el administrador --}}
             @if(auth()->check() && auth()->user()->role === 'admin')
                 <li style="border-top: 1px solid #1e293b; margin-top: 10px;">
                     <a href="{{ route('users.index') }}" style="color: #fbbf24; font-weight: 600;">Gestionar Usuarios</a>

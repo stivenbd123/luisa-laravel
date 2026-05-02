@@ -3,70 +3,80 @@
 @section('title', 'Agenda de Citas | MediSys')
 
 @section('content')
-<style>
-    .module-container { background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); padding: 30px; border-top: 4px solid #0f172a; }
-    .module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
-    .module-title { color: #0f172a; font-size: 20px; font-weight: 600; }
-    .btn-primary { background-color: #0284c7; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 14px; transition: background-color 0.2s; }
-    .btn-primary:hover { background-color: #0369a1; }
-    .alert-success { background-color: #f0fdf4; color: #166534; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; margin-bottom: 20px; font-size: 14px; }
-    .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th { background-color: #f8fafc; color: #475569; font-size: 12px; font-weight: 600; text-transform: uppercase; padding: 15px; text-align: left; border-bottom: 2px solid #e2e8f0; }
-    .data-table td { padding: 16px 15px; color: #334155; font-size: 14px; border-bottom: 1px solid #f1f5f9; }
-    .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-    /* Ajuste a tus estados reales de la base de datos */
-    .status-agendada { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-    .status-confirmada { background-color: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
-    .status-atendida { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-    .status-cancelada { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-    .empty-state { text-align: center; padding: 40px; color: #64748b; font-style: italic; }
-</style>
-
-<div class="module-container">
-    <div class="module-header">
-        <h2 class="module-title">Agenda General de Citas</h2>
-        <a href="{{ route('appointments.create') }}" class="btn-primary">Agendar Nueva Cita</a>
+<div class="module-container" style="background: white; padding: 30px; border-radius: 12px; border-top: 4px solid #0f172a;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2 style="color: #0f172a; font-size: 20px; font-weight: 600;">Agenda General de Citas</h2>
+        <a href="{{ route('appointments.create') }}" style="background: #0284c7; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;">Nueva Cita</a>
     </div>
 
-    @if(session('success'))
-        <div class="alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <table class="data-table">
+    <table style="width: 100%; border-collapse: collapse;">
         <thead>
-            <tr>
-                <th>Fecha y Hora</th>
-                <th>Paciente</th>
-                <th>Médico Asignado</th>
-                <th>Consultorio</th>
-                <th>Estado</th>
-                <th>Acciones</th>
+            <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                <th style="padding: 15px; text-align: left; font-size: 12px; color: #475569; text-transform: uppercase;">Fecha y Hora</th>
+                <th style="padding: 15px; text-align: left; font-size: 12px; color: #475569; text-transform: uppercase;">Paciente</th>
+                <th style="padding: 15px; text-align: left; font-size: 12px; color: #475569; text-transform: uppercase;">Médico</th>
+                <th style="padding: 15px; text-align: left; font-size: 12px; color: #475569; text-transform: uppercase;">Estado</th>
+                <th style="padding: 15px; text-align: left; font-size: 12px; color: #475569; text-transform: uppercase;">Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($appointments as $appointment)
-                <tr>
-                    <td><strong>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y H:i') }}</strong></td>
-                    <td>{{ $appointment->patient->name }}</td>
-                    <td>Dr./Dra. {{ $appointment->doctor->name }}</td>
-                    <td>{{ $appointment->consultingRoom->name }}</td>
-                    <td>
-                        <span class="status-badge status-{{ strtolower($appointment->status) }}">
-                            {{ $appointment->status }}
-                        </span>
+            @foreach($appointments as $appt)
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 15px; font-size: 14px;"><strong>{{ $appt->appointment_date }}</strong></td>
+                    <td style="padding: 15px; font-size: 14px;">{{ $appt->patient->name }}</td>
+                    <td style="padding: 15px; font-size: 14px;">Dr. {{ $appt->doctor->name }}</td>
+                    <td style="padding: 15px; font-size: 14px;">
+                        <span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">{{ $appt->status }}</span>
                     </td>
-                    <td>
-                        <a href="{{ route('appointments.edit', $appointment->id) }}" style="color: #0284c7; text-decoration: none; font-weight: 600;">Gestionar</a>
+                    <td style="padding: 15px;">
+                        <button onclick="enviarRecordatorio({{ $appt->id }})" id="btn-rem-{{ $appt->id }}" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">
+                            <span>📧</span> Enviar Recordatorio
+                        </button>
                     </td>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="6" class="empty-state">No hay citas programadas en el sistema.</td>
-                </tr>
-            @endforelse
+            @endforeach
         </tbody>
     </table>
 </div>
+
+<script>
+function enviarRecordatorio(appointmentId) {
+    const btn = document.getElementById('btn-rem-' + appointmentId);
+    const originalContent = btn.innerHTML;
+    
+    // Feedback visual inmediato
+    btn.innerHTML = '<span>⏳</span> Enviando...';
+    btn.style.opacity = '0.7';
+    btn.disabled = true;
+
+    fetch(`/appointments/${appointmentId}/send-reminder`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Éxito: ' + data.message);
+            btn.innerHTML = '<span>✅</span> Enviado';
+            btn.style.background = '#166534';
+        } else {
+            alert('❌ Error: ' + data.message);
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Error de conexión con el servidor.');
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    });
+}
+</script>
 @endsection

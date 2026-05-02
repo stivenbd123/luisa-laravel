@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
 
    
     Route::get('/exportaciones', [ReportController::class, 'exportsView'])->name('exports.view');
+    Route::post('/appointments/{id}/send-reminder', [App\Http\Controllers\AppointmentController::class, 'sendReminder'])->name('appointments.reminder');
     
     Route::get('/exportaciones', [ReportController::class, 'exportsView'])->name('exports.view');
     Route::post('/exportaciones/generar', [ReportController::class, 'generateReport'])->name('exports.generate');

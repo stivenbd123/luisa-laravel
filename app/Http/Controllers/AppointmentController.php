@@ -8,6 +8,8 @@ use App\Models\Specialty;
 use App\Models\Doctor;
 use App\Models\ConsultingRoom;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
@@ -91,4 +93,52 @@ class AppointmentController extends Controller
 
         return redirect()->route('appointments.index')->with('success', 'El estado de la cita ha sido actualizado.');
     }
+
+
+public function sendReminder($id)
+{
+    // Buscamos la cita con la información del paciente y el médico
+    $appt = Appointment::with(['patient', 'doctor', 'consultingRoom'])->findOrFail($id);
+
+    try {
+        $data = [
+            'patient_name' => $appt->patient->name,
+            'date' => Carbon::parse($appt->appointment_date)->format('d/m/Y h:i A'),
+            'doctor' => $appt->doctor->name,
+            'room' => $appt->consultingRoom->name,
+        ];
+
+        // Envío del correo usando el Facade de Mail de Laravel
+        Mail::send([], [], function ($message) use ($appt, $data) {
+            $message->to($appt->patient->email)
+                ->subject('Recordatorio de Cita Médica - MediSys')
+                ->html("
+                    <div style='font-family: sans-serif; color: #334155; max-width: 600px; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px;'>
+                        <h2 style='color: #0284c7;'>Recordatorio de Cita</h2>
+                        <p>Hola <strong>{$data['patient_name']}</strong>,</p>
+                        <p>Te escribimos de <strong>MediSys Clinic</strong> para recordarte tu próxima cita programada:</p>
+                        <div style='background: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0;'>
+                            <p style='margin: 5px 0;'><strong>📅 Fecha y Hora:</strong> {$data['date']}</p>
+                            <p style='margin: 5px 0;'><strong>👨‍⚕️ Médico:</strong> Dr./Dra. {$data['doctor']}</p>
+                            <p style='margin: 5px 0;'><strong>🏥 Consultorio:</strong> {$data['room']}</p>
+                        </div>
+                        <p style='font-size: 13px; color: #64748b;'>Si no puedes asistir, por favor infórmanos con al menos 24 horas de antelación. Te recomendamos llegar 15 minutos antes de la hora pactada.</p>
+                        <hr style='border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+                        <p style='font-size: 11px; text-align: center; color: #94a3b8;'>Este es un mensaje automático, por favor no respondas a este correo.</p>
+                    </div>
+                ");
+        });
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'El recordatorio ha sido enviado con éxito al correo del paciente.'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false, 
+            'message' => 'Hubo un error al intentar enviar el correo: ' . $e->getMessage()
+        ], 500);
+    }
+}
 }
